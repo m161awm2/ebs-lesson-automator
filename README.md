@@ -22,4 +22,3 @@ npm start
 Some EBS player states require a real first user click before playback starts. The app does not fake course completion; it only watches playback progress and moves to the next lesson after the current video reports completion.
 
 Use this only where browser automation is permitted by the service and your organization. The app is designed as a playback watcher, not as a completion bypass.
-# ebs-lesson-automator
