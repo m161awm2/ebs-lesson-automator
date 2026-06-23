@@ -10,7 +10,17 @@ Desktop helper that watches an EBS SW lesson video and opens the next lesson whe
 - Moves to the next configured `lctreSn` lesson ID when playback completes.
 - Tries to start playback after moving, while still allowing manual first-play clicks when the site requires them.
 
-## Install
+## Download
+
+For regular users, download the latest installer from the GitHub Releases page:
+
+https://github.com/m161awm2/ebs-lesson-automator/releases
+
+Current local build:
+
+- macOS Apple Silicon: `EBS Lesson Automator-0.1.0-arm64.dmg`
+
+## Developer Install
 
 ```bash
 npm install
