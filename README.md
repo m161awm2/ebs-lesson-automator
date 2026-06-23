@@ -12,13 +12,46 @@ Desktop helper that watches an EBS SW lesson video and opens the next lesson whe
 
 ## Download
 
-For regular users, download the latest installer from the GitHub Releases page:
+For regular users, download the latest app zip from the GitHub Releases page:
 
 https://github.com/m161awm2/ebs-lesson-automator/releases
 
-Current local build:
+Current release:
 
-- macOS Apple Silicon: `EBS Lesson Automator-0.1.7-arm64-mac.zip`
+- macOS Apple Silicon: `EBS.Lesson.Automator-0.1.7-arm64-mac.zip`
+
+After downloading:
+
+1. Unzip the file.
+2. Move `EBS Lesson Automator.app` to `Applications` if you want.
+3. Open the app.
+
+### macOS Security Warning
+
+This app is not code signed or notarized because Apple charges for the Developer Program. macOS may show a warning such as:
+
+- `"EBS Lesson Automator.app" is damaged and can't be opened.`
+- `"EBS Lesson Automator.app" cannot be opened because Apple cannot check it for malicious software.`
+
+If that happens, try this first:
+
+1. Right-click or Control-click `EBS Lesson Automator.app`.
+2. Click `Open`.
+3. Click `Open` again in the warning dialog.
+
+If macOS still says the app is damaged, run this command in Terminal after unzipping the app:
+
+```bash
+xattr -cr "/Applications/EBS Lesson Automator.app"
+```
+
+If the app is still in Downloads, use this instead:
+
+```bash
+xattr -cr "$HOME/Downloads/EBS Lesson Automator.app"
+```
+
+Then open the app again.
 
 ## Developer Install
 
