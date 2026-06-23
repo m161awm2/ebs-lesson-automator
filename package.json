@@ -1,0 +1,50 @@
+{
+  "name": "ebs-lesson-automator",
+  "version": "0.1.0",
+  "description": "Desktop helper that watches EBS SW lesson videos and advances to the next lesson when playback completes.",
+  "type": "module",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --mac dmg zip",
+    "postinstall": "playwright install chromium"
+  },
+  "keywords": [
+    "ebs",
+    "lesson",
+    "automation",
+    "playwright",
+    "electron"
+  ],
+  "author": "구본무",
+  "license": "MIT",
+  "build": {
+    "appId": "com.ebs.lessonautomator",
+    "productName": "EBS Lesson Automator",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "src/**/*",
+      "package.json"
+    ],
+    "mac": {
+      "category": "public.app-category.education",
+      "icon": "build/icon.icns",
+      "target": [
+        "dmg",
+        "zip"
+      ]
+    },
+    "dmg": {
+      "artifactName": "${productName}-${version}-${arch}.${ext}"
+    }
+  },
+  "dependencies": {
+    "playwright": "^1.45.3"
+  },
+  "devDependencies": {
+    "electron": "^42.4.1",
+    "electron-builder": "^26.15.3"
+  }
+}

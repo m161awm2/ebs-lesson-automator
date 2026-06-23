@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EBS Lesson Automator</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <section class="panel">
+        <h1>EBS Lesson Automator</h1>
+        <p class="subtle">영상 완료를 감지해 다음 회차로 이동하는 데스크톱 도우미입니다.</p>
+
+        <label>
+          시작 URL
+          <input id="startUrl" value="https://www.ebssw.kr/mypage/userlrn/userLrnView.do?atnlcNo=336803&stepSn=58226&lctreSn=1877987&returnUrl=" />
+        </label>
+
+        <label>
+          회차 ID 목록
+          <textarea id="lessonIds" rows="5">1877987
+1877988
+1877989
+1877990
+1877991
+1877992</textarea>
+        </label>
+
+        <label>
+          확인 간격(ms)
+          <input id="pollMs" type="number" min="1000" step="1000" value="5000" />
+        </label>
+
+        <div class="actions">
+          <button id="start">시작</button>
+          <button id="stop" class="secondary">중지</button>
+        </div>
+      </section>
+
+      <section class="panel log-panel">
+        <h2>상태</h2>
+        <ol id="log"></ol>
+      </section>
+    </main>
+
+    <script src="./renderer.js"></script>
+  </body>
+</html>
