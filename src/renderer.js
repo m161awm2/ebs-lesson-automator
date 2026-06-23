@@ -11,12 +11,20 @@ startButton.addEventListener("click", async () => {
     .filter(Boolean);
   const pollMs = Number(document.querySelector("#pollMs").value);
 
-  await window.lessonApp.start({ startUrl, lessonIds, pollMs });
-  appendLog("started", "자동화를 시작했습니다.");
+  try {
+    await window.lessonApp.start({ startUrl, lessonIds, pollMs });
+    appendLog("started", "자동화를 시작했습니다.");
+  } catch (error) {
+    appendLog("error", `시작 실패: ${error.message}`);
+  }
 });
 
 stopButton.addEventListener("click", async () => {
-  await window.lessonApp.stop();
+  try {
+    await window.lessonApp.stop();
+  } catch (error) {
+    appendLog("error", `중지 실패: ${error.message}`);
+  }
 });
 
 window.lessonApp.onStatus((payload) => {

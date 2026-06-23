@@ -1,6 +1,4 @@
-import electron from "electron";
-
-const { contextBridge, ipcRenderer } = electron;
+const { contextBridge, ipcRenderer } = require("electron");
 
 contextBridge.exposeInMainWorld("lessonApp", {
   start: (config) => ipcRenderer.invoke("runner:start", config),

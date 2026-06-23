@@ -11,6 +11,7 @@ export class LessonRunner {
     this.browser = null;
     this.page = null;
     this.stopped = false;
+    this.redirectedAfterLogin = false;
   }
 
   async start() {
@@ -41,6 +42,11 @@ export class LessonRunner {
 
       const state = await this.readVideoState();
       if (!state.hasVideo) {
+        const redirected = await this.redirectToLessonAfterLogin();
+        if (redirected) {
+          continue;
+        }
+
         this.status("waiting", "영상 요소를 찾는 중입니다.");
         continue;
       }
@@ -104,6 +110,47 @@ export class LessonRunner {
     }
   }
 
+  async redirectToLessonAfterLogin() {
+    if (this.redirectedAfterLogin) {
+      return false;
+    }
+
+    const currentUrl = await this.page.url();
+    if (isLessonUrl(currentUrl)) {
+      return false;
+    }
+
+    const loginState = await this.readLoginState();
+    if (loginState.isLoginPage || loginState.hasPasswordInput) {
+      this.status("waiting", "로그인을 기다리는 중입니다.");
+      return true;
+    }
+
+    this.redirectedAfterLogin = true;
+    this.status("moving", "로그인이 완료된 것으로 보여 시작 회차로 이동합니다.");
+    await this.page.goto(this.startUrl);
+    await this.page.waitForLoadState("domcontentloaded").catch(() => {});
+    await this.page.waitForTimeout(1500);
+    await this.tryStartPlayback();
+    return true;
+  }
+
+  async readLoginState() {
+    return this.page.evaluate(() => {
+      const url = location.href.toLowerCase();
+      const hasPasswordInput = Boolean(
+        document.querySelector("input[type='password']")
+      );
+      const isLoginPage =
+        url.includes("login") ||
+        url.includes("signin") ||
+        url.includes("sso") ||
+        url.includes("member");
+
+      return { hasPasswordInput, isLoginPage };
+    });
+  }
+
   async gotoNextLesson() {
     const currentId = getCurrentLessonId(await this.page.url());
     const currentIndex = this.lessonIds.indexOf(currentId);
@@ -140,6 +187,10 @@ function isComplete(state) {
 
 function getCurrentLessonId(url) {
   return new URL(url).searchParams.get("lctreSn");
+}
+
+function isLessonUrl(url) {
+  return Boolean(getCurrentLessonId(url));
 }
 
 function replaceLessonId(url, lessonId) {
