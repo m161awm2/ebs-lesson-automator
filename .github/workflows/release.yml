@@ -34,7 +34,7 @@ jobs:
         run: npm ci
 
       - name: Build app
-        run: npm run build -- --arm64
+        run: npx electron-builder --mac zip --arm64
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: false
 
@@ -43,6 +43,5 @@ jobs:
         with:
           tag_name: ${{ github.event.inputs.tag || github.ref_name }}
           files: |
-            dist/*.dmg
             dist/*-mac.zip
           generate_release_notes: true
