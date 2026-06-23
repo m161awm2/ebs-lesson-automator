@@ -88,10 +88,19 @@ export class LessonRunner {
   }
 
   async tryStartPlayback() {
+    await this.page.locator("video").first().waitFor({ timeout: 8000 }).catch(() => {});
+    await this.playVideoElement();
+    if (await this.isVideoPlaying()) {
+      return;
+    }
+
     const playButton = this.page.locator(".vjs-big-play-button");
-    if ((await playButton.count()) === 1) {
+    if ((await playButton.count()) > 0) {
       await playButton.click({ force: true }).catch(() => {});
       await this.page.waitForTimeout(700);
+      if (await this.isVideoPlaying()) {
+        return;
+      }
     }
 
     const videoBox = await this.page.evaluate(() => {
@@ -107,7 +116,27 @@ export class LessonRunner {
         Math.round(videoBox.x + videoBox.width / 2),
         Math.round(videoBox.y + videoBox.height / 2)
       );
+      await this.page.waitForTimeout(700);
+      if (!(await this.isVideoPlaying())) {
+        await this.playVideoElement();
+      }
     }
+  }
+
+  async playVideoElement() {
+    await this.page.evaluate(async () => {
+      const video = document.querySelector("video");
+      if (!video || !video.paused) {
+        return;
+      }
+
+      await video.play().catch(() => {});
+    });
+  }
+
+  async isVideoPlaying() {
+    const state = await this.readVideoState();
+    return state.hasVideo && !state.paused && !state.ended;
   }
 
   async redirectToLessonAfterLogin() {
@@ -163,7 +192,8 @@ export class LessonRunner {
     this.status("moving", `다음 회차로 이동합니다: ${nextId}`);
     await this.page.goto(nextUrl);
     await this.page.waitForLoadState("domcontentloaded").catch(() => {});
-    await this.page.waitForTimeout(1500);
+    await this.page.locator("video").first().waitFor({ timeout: 10000 }).catch(() => {});
+    await this.page.waitForTimeout(1000);
     await this.tryStartPlayback();
     return true;
   }
