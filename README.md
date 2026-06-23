@@ -18,7 +18,7 @@ https://github.com/m161awm2/ebs-lesson-automator/releases
 
 Current local build:
 
-- macOS Apple Silicon: `EBS Lesson Automator-0.1.6-arm64-mac.zip`
+- macOS Apple Silicon: `EBS Lesson Automator-0.1.7-arm64-mac.zip`
 
 ## Developer Install
 
