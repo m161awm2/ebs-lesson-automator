@@ -1,6 +1,6 @@
 {
   "name": "ebs-lesson-automator",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Desktop helper that watches EBS SW lesson videos and advances to the next lesson when playback completes.",
   "type": "module",
   "main": "src/main.js",
