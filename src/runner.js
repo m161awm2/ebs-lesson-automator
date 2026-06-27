@@ -11,7 +11,9 @@ export class LessonRunner {
     this.browser = null;
     this.page = null;
     this.stopped = false;
-    this.redirectedAfterLogin = false;
+    this.lastLessonUrl = startUrl;
+    this.hasSeenVideo = false;
+    this.logoutNotified = false;
   }
 
   async start() {
@@ -49,6 +51,12 @@ export class LessonRunner {
 
         this.status("waiting", "영상 요소를 찾는 중입니다.");
         continue;
+      }
+
+      this.hasSeenVideo = true;
+      this.logoutNotified = false;
+      if (state.url) {
+        this.lastLessonUrl = state.url;
       }
 
       if (state.paused && !state.ended && state.currentTime === 0) {
@@ -140,10 +148,6 @@ export class LessonRunner {
   }
 
   async redirectToLessonAfterLogin() {
-    if (this.redirectedAfterLogin) {
-      return false;
-    }
-
     const currentUrl = await this.page.url();
     if (isLessonUrl(currentUrl)) {
       return false;
@@ -151,13 +155,25 @@ export class LessonRunner {
 
     const loginState = await this.readLoginState();
     if (loginState.isLoginPage || loginState.hasPasswordInput) {
-      this.status("waiting", "로그인을 기다리는 중입니다.");
+      if (this.hasSeenVideo) {
+        if (!this.logoutNotified) {
+          this.status(
+            "logged-out",
+            "로그인이 해제되어 강의가 멈췄습니다. 브라우저에서 다시 로그인해주세요."
+          );
+          this.logoutNotified = true;
+        } else {
+          this.status("waiting", "재로그인을 기다리는 중입니다.");
+        }
+      } else {
+        this.status("waiting", "로그인을 기다리는 중입니다.");
+      }
       return true;
     }
 
-    this.redirectedAfterLogin = true;
-    this.status("moving", "로그인이 완료된 것으로 보여 시작 회차로 이동합니다.");
-    await this.page.goto(this.startUrl);
+    const targetUrl = this.lastLessonUrl || this.startUrl;
+    this.status("moving", "로그인이 완료된 것으로 보여 강의 화면으로 이동합니다.");
+    await this.page.goto(targetUrl);
     await this.page.waitForLoadState("domcontentloaded").catch(() => {});
     await this.page.waitForTimeout(1500);
     await this.tryStartPlayback();
@@ -189,6 +205,7 @@ export class LessonRunner {
     }
 
     const nextUrl = replaceLessonId(await this.page.url(), nextId);
+    this.lastLessonUrl = nextUrl;
     this.status("moving", `다음 회차로 이동합니다: ${nextId}`);
     await this.page.goto(nextUrl);
     await this.page.waitForLoadState("domcontentloaded").catch(() => {});
