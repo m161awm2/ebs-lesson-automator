@@ -14,6 +14,7 @@ export class LessonRunner {
     this.lastLessonUrl = startUrl;
     this.hasSeenVideo = false;
     this.logoutNotified = false;
+    this.waitingForRelogin = false;
   }
 
   async start() {
@@ -149,10 +150,6 @@ export class LessonRunner {
 
   async redirectToLessonAfterLogin() {
     const currentUrl = await this.page.url();
-    if (isLessonUrl(currentUrl)) {
-      return false;
-    }
-
     const loginState = await this.readLoginState();
     if (loginState.isLoginPage || loginState.hasPasswordInput) {
       if (this.hasSeenVideo) {
@@ -162,6 +159,7 @@ export class LessonRunner {
             "로그인이 해제되어 강의가 멈췄습니다. 브라우저에서 다시 로그인해주세요."
           );
           this.logoutNotified = true;
+          this.waitingForRelogin = true;
         } else {
           this.status("waiting", "재로그인을 기다리는 중입니다.");
         }
@@ -171,12 +169,18 @@ export class LessonRunner {
       return true;
     }
 
+    if (isLessonUrl(currentUrl) && !this.waitingForRelogin) {
+      return false;
+    }
+
     const targetUrl = this.lastLessonUrl || this.startUrl;
-    this.status("moving", "로그인이 완료된 것으로 보여 강의 화면으로 이동합니다.");
+    this.status("moving", "로그인이 완료되어 강의 화면으로 다시 이동합니다.");
     await this.page.goto(targetUrl);
     await this.page.waitForLoadState("domcontentloaded").catch(() => {});
     await this.page.waitForTimeout(1500);
     await this.tryStartPlayback();
+    this.waitingForRelogin = false;
+    this.logoutNotified = false;
     return true;
   }
 
@@ -190,7 +194,9 @@ export class LessonRunner {
         url.includes("login") ||
         url.includes("signin") ||
         url.includes("sso") ||
-        url.includes("member");
+        url.includes("member") ||
+        document.title.toLowerCase().includes("login") ||
+        document.title.includes("로그인");
 
       return { hasPasswordInput, isLoginPage };
     });
