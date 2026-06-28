@@ -3,7 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { LessonRunner } from "./runner.js";
 
-const { app, BrowserWindow, dialog, ipcMain } = electron;
+const { app, BrowserWindow, dialog, ipcMain, shell } = electron;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -22,6 +22,13 @@ function createWindow() {
   });
 
   mainWindow.loadFile(path.join(__dirname, "renderer.html"));
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    if (url.startsWith("https://")) {
+      void shell.openExternal(url);
+    }
+
+    return { action: "deny" };
+  });
 }
 
 function emitStatus(payload) {

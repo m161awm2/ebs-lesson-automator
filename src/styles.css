@@ -14,7 +14,7 @@ body {
   grid-template-columns: minmax(340px, 460px) 1fr;
   gap: 16px;
   min-height: 100vh;
-  padding: 20px;
+  padding: 20px 20px 76px;
 }
 
 .panel {
@@ -96,8 +96,74 @@ li.error {
   color: #bd1e1e;
 }
 
+.corner-links {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  display: flex;
+  gap: 10px;
+  z-index: 10;
+}
+
+.corner-link {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border: 1px solid #c8d1df;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #1d2433;
+  box-shadow: 0 10px 24px rgb(29 36 51 / 14%);
+  text-decoration: none;
+  transition:
+    border-color 140ms ease,
+    box-shadow 140ms ease,
+    transform 140ms ease;
+}
+
+.corner-link:hover {
+  border-color: #2459d6;
+  box-shadow: 0 14px 30px rgb(29 36 51 / 20%);
+  transform: translateY(-2px);
+}
+
+.corner-link:focus-visible {
+  outline: 3px solid rgb(36 89 214 / 30%);
+  outline-offset: 3px;
+}
+
+.corner-icon {
+  width: 22px;
+  height: 22px;
+  fill: currentColor;
+}
+
+.personal-link {
+  background: #1d2433;
+  color: #ffffff;
+}
+
+.personal-icon {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  border: 2px solid currentColor;
+  border-radius: 7px;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1;
+}
+
 @media (max-width: 820px) {
   .app {
     grid-template-columns: 1fr;
+    padding: 16px 16px 76px;
+  }
+
+  .corner-links {
+    right: 16px;
+    bottom: 16px;
   }
 }
