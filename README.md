@@ -18,7 +18,7 @@ https://github.com/m161awm2/ebs-lesson-automator/releases
 
 현재 릴리스:
 
-- macOS Apple Silicon: `EBS Lesson Automator-0.2.0-arm64-mac.zip`
+- macOS Apple Silicon: `EBS.Lesson.Automator-0.2.0-arm64-mac.zip`
 
 다운로드 후 실행 방법:
 
